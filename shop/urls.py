@@ -6,8 +6,9 @@ app_name = 'shop'
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('signup/', SignupView.as_view(), name='signup'),
-    path('login/', views.login, name='login'),
+    path('my_cart/', views.my_cart, name='cart'),
+
+    
 
 
 ]

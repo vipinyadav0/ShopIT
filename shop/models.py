@@ -25,11 +25,11 @@ class Customer(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
-    Description = models.CharField(max_length=100,null=True, blank=True)
+    description = models.CharField(max_length=100,null=True, blank=True)
     category = models.ForeignKey("Category", null=False,blank= False, on_delete=models.CASCADE)
     original_price = models.FloatField(null=False, blank=False)
     discount_price = models.FloatField(null=True, blank= True)
-    image = models.ImageField(upload_to='product_image', null = True, blank =True)
+    image = models.ImageField(upload_to='product_image/', null = True, blank =True)
     slug = models.SlugField(null=True, blank=True)
 
     def __str__(self):
