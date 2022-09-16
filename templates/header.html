@@ -11,26 +11,33 @@
 <title>Document</title>
 </head>
 <body>
-    <header class="text-gray-600 body-font">
+
+    <header class="text-gray-600 body-font bg-green-100 shadow-xl">
         <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
           <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-10 h-10 text-white p-2 bg-indigo-500 rounded-full" viewBox="0 0 24 24">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="blue" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-10 h-10 text-white p-2 bg-green-500 rounded-full" viewBox="0 0 24 24">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
             </svg>
-            <span class="ml-3 text-xl">Tailblocks</span>
+            <span class="ml-3 text-xl">ShopIT</span>
           </a>
           <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
-            <a class="mr-5 hover:text-gray-900">First Link</a>
-            <a class="mr-5 hover:text-gray-900">Second Link</a>
-            <a class="mr-5 hover:text-gray-900">Third Link</a>
-            <a class="mr-5 hover:text-gray-900">Fourth Link</a>
+            {% comment %} <a class="mr-5 hover:text-gray-900">First Link</a>
+            <a class="mr-5 hover:text-gray-900">Second Link</a> {% endcomment %}
+            <a href=""><input class="mr-5" type="text">
+            </a>
+            <a class="mr-5 hover:text-gray-900">Become A Seller</a>
+            <div class="flex relative"><a class="mr-5 relative hover:text-gray-900"><svg class="px-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            </svg><span>Cart</span>
+            </a></div>
           </nav>
-          <button class="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">Button
-            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-1" viewBox="0 0 24 24">
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
+          <a href="{% url 'shop:signup' %}">
+          <button class="inline-flex items-center bg-blue-200 border-0 py-2 px-4 focus:outline-none hover:bg-blue-300 rounded text-base mt-4 md:mt-0">Signup
+          </button></a>
+          <button class="inline-flex items-center bg-blue-200 border-0 mx-4 py-2 px-5 focus:outline-none hover:bg-blue-300 rounded text-base mt-4 md:mt-0">Login
           </button>
         </div>
+
       </header>
 </body>
 </html>
