@@ -12,9 +12,9 @@
 </head>
 <body>
 
-    <header class="text-gray-600 body-font bg-green-100 shadow-xl">
-        <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
-          <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
+    <header class="text-gray-600 body-font bg-green-300 shadow-xl">
+        <div class="container mx-auto flex flex-wrap p-3 flex-col md:flex-row items-center">
+          <a href="{% url 'shop:home'%}" class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
             <svg xmlns="http://www.w3.org/2000/svg" fill="blue" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-10 h-10 text-white p-2 bg-green-500 rounded-full" viewBox="0 0 24 24">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
             </svg>
@@ -23,21 +23,77 @@
           <nav class="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
             {% comment %} <a class="mr-5 hover:text-gray-900">First Link</a>
             <a class="mr-5 hover:text-gray-900">Second Link</a> {% endcomment %}
-            <a href=""><input class="mr-5" type="text">
             </a>
+            <div class="navbar-search smallsearch mx-3 my-2 mr-7 bg-white pr-4 col-xs-11 rounded-full">
+              <form  action="/search" method="get">
+                <div class="row"> <input class="navbar-input p-3 w-96 rounded-full col-xs-11 outline-none" type="search" placeholder="Search for Products, Brands and more" name="query" id="query">
+                  <button class="navbar-button col-xs-1" type="submit">
+                    <svg width="15px" height="15px" class="">
+                            <path d="M11.618 9.897l4.224 4.212c.092.09.1.23.02.312l-1.464 1.46c-.08.08-.222.072-.314-.02L9.868 11.66M6.486 10.9c-2.42 0-4.38-1.955-4.38-4.367 0-2.413 1.96-4.37 4.38-4.37s4.38 1.957 4.38 4.37c0 2.412-1.96 4.368-4.38 4.368m0-10.834C2.904.066 0 2.96 0 6.533 0 10.105 2.904 13 6.486 13s6.487-2.895 6.487-6.467c0-3.572-2.905-6.467-6.487-6.467 "></path>
+                    </svg>
+                  </button>
+                </div>
+              </form>
+            </div>
             <a class="mr-5 hover:text-gray-900">Become A Seller</a>
-            <div class="flex relative"><a class="mr-5 relative hover:text-gray-900"><svg class="px-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <div class="flex relative"><a class="mr-5 relative hover:text-gray-900 inline-block" href="{% url 'shop:cart'%}"><svg class="px-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-            </svg><span>Cart</span>
+            </svg> Cart<span class="item-number ">{{ product_count_in_cart }}</span>
             </a></div>
+            
           </nav>
-          <a href="{% url 'shop:signup' %}">
-          <button class="inline-flex items-center bg-blue-200 border-0 py-2 px-4 focus:outline-none hover:bg-blue-300 rounded text-base mt-4 md:mt-0">Signup
-          </button></a>
-          <button class="inline-flex items-center bg-blue-200 border-0 mx-4 py-2 px-5 focus:outline-none hover:bg-blue-300 rounded text-base mt-4 md:mt-0">Login
-          </button>
+          <div class="inline-flex items-center gap-2 list-none lg:ml-auto">
+            {% if user.is_authenticated %}
+            
+            <button id="dropdownAvatarNameButton" data-dropdown-toggle="dropdownAvatarName" class="flex items-center text-sm font-medium text-gray-900 rounded-full hover:text-blue-600 dark:hover:text-blue-500 md:mr-0 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:text-white" type="button">
+              <span class="sr-only">Open user menu</span>
+                <img class="mr-2 w-8 h-8 rounded-full" src="https://placeimg.com/80/80/people" alt="user photo"> 
+                <a href="" class="mr-4 text-black">{{ user.get_username.upper}}</a>
+
+              <svg class="w-4 h-4 mx-1.5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </button>
+
+            <!-- Dropdown menu -->
+            <div id="dropdownAvatarName" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate3d(0px, 366px, 0px);" data-popper-reference-hidden="" data-popper-escaped="" data-popper-placement="bottom">
+              <div class="py-3 px-4 text-sm text-gray-900 dark:text-white">
+                <div class="truncate">{{ user.get_email}}</div>
+              </div>
+              <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
+                <li>
+                  <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">My Profile</a>
+                </li>
+                <li>
+                  <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Wishlist</a>
+                </li>
+                <li>
+                  <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Coupons</a>
+                </li>
+                <li>
+                  <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+                </li>
+                <li>
+                  <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">My Orders</a>
+                </li>
+              </ul>
+              <div class="py-1">
+                <a href="{% url 'logout' %}" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Log Out</a>
+              </div>
+            </div>
+
+        
+            {% else %}
+          <a href="{% url 'signup' %}">
+          <button class="items-center block px-10 py-3 text-base font-medium text-center text-white transition duration-500 ease-in-out transform bg-blue-600 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Register</button>
+
+          </a>
+          <a href="{% url 'login' %}">
+          <button class="items-center block px-10 py-2.5 bg-white text-base font-medium text-center text-blue-600 transition duration-500 ease-in-out transform border-2 border-white shadow-md rounded-xl focus:outline-none  focus:ring-offset-2">Login</button>
+        </a>
         </div>
+        </div>
+        {% endif %}
 
       </header>
+      <script src="https://unpkg.com/@themesberg/flowbite@latest/dist/flowbite.bundle.js"></script>
 </body>
 </html>
