@@ -1,4 +1,5 @@
 
+from re import T
 from tabnanny import verbose
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -10,9 +11,9 @@ from django.shortcuts import reverse
 # Create your models here.
 class Customer(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
-    profile_pic= models.ImageField(upload_to='profile_pic/CustomerProfilePic/',null=True,blank=True)
-    address = models.CharField(max_length=40)
-    mobile = models.CharField(max_length=20,null=False)
+    profile_pic= models.ImageField(upload_to='profile_pic/',null=True,blank=True)
+    address = models.CharField(max_length=40, null=True, blank=True)
+    mobile = models.CharField(max_length=20,null=True, blank=True)
     @property
     def get_name(self):
         return self.user.first_name+" "+self.user.last_name
@@ -20,7 +21,7 @@ class Customer(models.Model):
     def get_id(self):
         return self.user.id
     def __str__(self):
-        return self.user.first_name
+        return self.user.username
 
 
 class Product(models.Model):
@@ -39,6 +40,11 @@ class Product(models.Model):
         return reverse("core:product", kwargs={
             'slug': self.slug
         })
+    
+    @staticmethod
+    def get_all_products():
+        return Product.objects.all()
+
 
     def get_add_to_cart_url(self):
         return reverse("core:add-to-cart", kwargs={

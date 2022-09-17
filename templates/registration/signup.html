@@ -16,10 +16,12 @@
                   <div class="text-center">
 
                   </div>
-                  <form method="POST">
+                  <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <p class="mb-4">Please Signup your account</p>
-                    {{ form|crispy}}
+                    <p class="mb-4">Please Signup</p>
+                    {{ userForm|crispy}}
+                    {{ customerForm|crispy}}
+
                     <div class="text-center pt-1 mb-12 pb-1">
                       <button
                         class="inline-block px-6 py-2.5 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full mb-3"

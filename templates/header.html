@@ -36,9 +36,11 @@
               </form>
             </div>
             <a class="mr-5 hover:text-gray-900">Become A Seller</a>
-            <div class="flex relative"><a class="mr-5 relative hover:text-gray-900 inline-block" href="{% url 'shop:cart'%}"><svg class="px-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <div class="flex items-center pt-3 pb-2">
+              <a class="mr-5 relative hover:text-gray-900 inline-block" href="{% url 'shop:cart'%}"><svg class="px-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-            </svg> Cart<span class="item-number ">{{ product_count_in_cart }}</span>
+            </svg>
+             <span>Cart</span><span class="item-number ">{{ product_count_in_cart }}</span>
             </a></div>
             
           </nav>
@@ -49,7 +51,7 @@
               <span class="sr-only">Open user menu</span>
                 <img class="mr-2 w-8 h-8 rounded-full" src="https://placeimg.com/80/80/people" alt="user photo"> 
                 <a href="" class="mr-4 text-black">{{ user.get_username.upper}}</a>
-
+                {{ user.user_id}}
               <svg class="w-4 h-4 mx-1.5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </button>
 
@@ -60,7 +62,7 @@
               </div>
               <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownInformdropdownAvatarNameButtonationButton">
                 <li>
-                  <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">My Profile</a>
+                  <a href="{% url 'shop:customer_profile' user.id %}" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">My Profile</a>
                 </li>
                 <li>
                   <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Wishlist</a>
