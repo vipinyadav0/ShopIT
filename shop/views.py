@@ -8,12 +8,15 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 
+from django.views import View
+
 from .forms import *
 
 # shwing all the available products
 
 def home(request):
     products = Product.objects.all()
+    request.session['test'] = 'Testing'
     if 'product_ids' in request.COOKIES:
         product_ids = request.COOKIES['product_ids']
         counter=product_ids.split('|')
@@ -27,6 +30,48 @@ def home(request):
         'num_visits' : num_visits
     }
     return render(request, 'home.html', context)
+
+class Home(View):
+    def get(self, request):
+        products = Product.objects.all()
+        request.session['test'] = 'Testing'
+        if 'product_ids' in request.COOKIES:
+            product_ids = request.COOKIES['product_ids']
+            counter=product_ids.split('|')
+            product_count_in_cart=len(set(counter))
+        else:
+            product_count_in_cart=0
+        num_visits = request.session.get('num_visits', 0)
+        request.session['num_visits'] = num_visits + 1
+        context = {
+            'products': products,
+            'num_visits' : num_visits
+        }
+        return render(request, 'home.html', context)
+
+    def post(self, request):
+        product = request.POST.get('product')
+        cart = request.session.get('cart')
+        request.session.get('cart') == "Cart"
+        if cart:
+            quantity = cart.get(product)
+            if quantity:
+
+                cart[product] = quantity+1
+            else:
+                cart[product] = 1
+            
+        else:
+            pass
+            cart = {}
+            cart[product] = 1
+        
+        request.session['cart'] = cart
+
+        print("Cart is : ",cart)
+        print(product)
+        return redirect('shop:home')
+
 
 def userSignup(request):
     userForm= CustomerUserCreationForm()
