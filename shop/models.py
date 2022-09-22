@@ -22,6 +22,10 @@ class Customer(models.Model):
         return self.user.id
     def __str__(self):
         return self.user.username
+    
+    @property
+    def get_by_username(self):
+        return self.user.username
 
 
 class Product(models.Model):
@@ -44,17 +48,12 @@ class Product(models.Model):
     @staticmethod
     def get_all_products():
         return Product.objects.all()
+    
+    @staticmethod
+    def get_products_by_id(ids):
+        return Product.objects.filter(id__in = ids)
 
 
-    def get_add_to_cart_url(self):
-        return reverse("core:add-to-cart", kwargs={
-            'slug': self.slug
-        })
-
-    def get_remove_from_cart_url(self):
-        return reverse("core:remove-from-cart", kwargs={
-            'slug': self.slug
-        })
 
 class Category(models.Model):
     category = models.CharField(max_length=50, null=False, blank= False)
@@ -75,11 +74,15 @@ class Order(models.Model):
     )
     customer=models.ForeignKey('Customer', on_delete=models.CASCADE,null=True)
     product=models.ForeignKey('Product',on_delete=models.CASCADE,null=True)
+    quantity = models.IntegerField(null=False, blank=False, default=1)
+    price = models.IntegerField(null=True, blank=True)
     email = models.CharField(max_length=50,null=True)
     address = models.CharField(max_length=500,null=True)
     mobile = models.CharField(max_length=20,null=True)
     order_date= models.DateField(auto_now_add=True,null=True)
     status=models.CharField(max_length=50,null=True,choices=STATUS)
+
+
 
 class Feedback(models.Model):
     name=models.CharField(max_length=40)

@@ -4,13 +4,14 @@
 {% block content %}
 
 {% load cart %}
+{% load currency %}
 
 <section class="text-gray-600 body-font">
 
     <div class="py-24 bg-slate-200">
       <div class="flex flex-wrap m-6">
         {% for product in products %}
-          <div class="bg-white drop-shadow-md rounded-lg p-4 border-2 lg:w-1/6 md:w-1/3 sm:w-1/2 mb-6 col-start-4 border-x-teal-300">
+          <div class="bg-white drop-shadow-md rounded-lg p-4 border-2 lg:w-1/6 md:w-1/3 sm:w-1/2 mb-6 col-start-4 border-x-teal-300" id="{{product.id}}">
               <img class="h-80 cover shadow-lg object-cover w-auto rounded"
                   src="{{product.image.url}}" />
               <div class="px-5 py-3 space-y-2">
@@ -22,18 +23,27 @@
                   </div>
                   <p class="space-x-2" >
                       <span class="text-2xl font-semibold">₹{{ product.original_price}}</span>
-                      <span class="text-sm line-through text-gray-500">₹{{product.discount_price}}</span>
+                      <span class="text-sm line-through text-gray-500">{{product.discount_price|currency}}</span>
                       <span class="text-sm text-red-700">40% off</span>
                   </p>
                   <div class="pt-3 pb-2">
                     {% if product|is_in_cart:request.session.cart  %}
                     <div class="grid grid-cols-4 gap-1 pt-3 col-span-3">
-                      <input type="submit" class="shadow-lg bg-red-600 text-white text-lg rounded text-center col-span-1" value=' - '>
-                      <div class="shadow-lg bg-red-300 text-white text-lg rounded text-center col-span-2">{{product|cart_quantity:request.session.cart}} in Cart</div>
-                      <input type='submit' class="shadow-lg bg-red-600 text-white text-lg rounded text-center col-span-1" value='+'>
+                      <form action="/#{{product.id}}" method = "POST" class="col-span-1 shadow-lg bg-red-600 hover:bg-green-700 text-white text-lg rounded text-center">
+                        {% csrf_token %}
+                        <input type="text" hidden name="product" id="product_id" value={{product.id}}>
+                        <input type="text" hidden name="remove" value="True">
+                      <input type='submit' class="" value='-'>
+                    </form>
+                      <div class="shadow-lg bg-green-500 text-white text-lg rounded text-center col-span-2">{{product|cart_quantity:request.session.cart}} in Cart</div>
+                      <form action="/#{{product.id}}" method = "POST" class="col-span-1 shadow-lg bg-red-600 hover:bg-green-700 text-white text-lg rounded text-center">
+                        {% csrf_token %}
+                        <input type="text" hidden name="product" id="product_id" value={{product.id}}>
+                      <input type='submit' class="" value='+'>
+                    </form>
                   </div>
                   {% else %}
-                    <form action="/" method='POST' class="grid grid-cols-3 items-center">
+                    <form action="/#{{product.id}}" method='POST' class="grid grid-cols-3 items-center">
                         {% csrf_token %}
                         <input type="text" hidden name="product" id="product_id" value={{product.id}}>
                       <input type="submit" class="px-4 py-2 shadow-lg col-span-2 bg-red-600 hover:bg-green-700 text-center text-sm text-white rounded duration-300"

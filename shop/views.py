@@ -1,40 +1,19 @@
-from django.shortcuts import render, redirect, reverse, get_object_or_404
-from . import views
-from django.views import generic
-from .models import Product, Customer
-from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth.models import Group
-
 from django.contrib import messages
+from django.contrib.auth.models import Group
+from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.views import View, generic
 
-from django.views import View
-
+from . import views
 from .forms import *
+from .models import Customer, Product
 
 # shwing all the available products
-
-def home(request):
-    products = Product.objects.all()
-    request.session['test'] = 'Testing'
-    if 'product_ids' in request.COOKIES:
-        product_ids = request.COOKIES['product_ids']
-        counter=product_ids.split('|')
-        product_count_in_cart=len(set(counter))
-    else:
-        product_count_in_cart=0
-    num_visits = request.session.get('num_visits', 0)
-    request.session['num_visits'] = num_visits + 1
-    context = {
-        'products': products,
-        'num_visits' : num_visits
-    }
-    return render(request, 'home.html', context)
 
 class Home(View):
     def get(self, request):
         products = Product.objects.all()
-        request.session['test'] = 'Testing'
         if 'product_ids' in request.COOKIES:
             product_ids = request.COOKIES['product_ids']
             counter=product_ids.split('|')
@@ -51,13 +30,20 @@ class Home(View):
 
     def post(self, request):
         product = request.POST.get('product')
+        remove = request.POST.get('remove')
         cart = request.session.get('cart')
         request.session.get('cart') == "Cart"
         if cart:
             quantity = cart.get(product)
             if quantity:
+                if remove:
+                    if quantity <= 1:
+                        cart.pop(product)
+                    else:
+                        cart[product] = quantity-1
 
-                cart[product] = quantity+1
+                else:
+                    cart[product] = quantity+1
             else:
                 cart[product] = 1
             
@@ -68,15 +54,12 @@ class Home(View):
         
         request.session['cart'] = cart
 
-        print("Cart is : ",cart)
-        print(product)
         return redirect('shop:home')
-
 
 def userSignup(request):
     userForm= CustomerUserCreationForm()
     customerForm=CustomerForm()
-    mydict={'userForm':userForm,'customerForm':customerForm}
+    mydict={'userForm':userForm, 'customerForm':customerForm}
     if request.method=='POST':
         userForm=CustomerUserCreationForm(request.POST)
         customerForm=CustomerForm(request.POST,request.FILES)
@@ -93,7 +76,21 @@ def userSignup(request):
     return render(request,'registration/signup.html',context=mydict)
 
 def my_cart(request):
+    if not request.session.get('cart'):
+        print("No item in cart")
+    else:
+        print(request.session.get('cart'))
+        ids = list(request.session.get('cart').keys())
+            # print(request.session.get('user'))
+        products = Product.get_products_by_id(ids)
+        length = len(products)
+        context = {
+            'products': products,
+            'length': length
+        }
+        return render(request, 'cart.html', context)
     return render(request, 'cart.html')
+    
 
 
 def add_to_cart(request, pk):
@@ -140,15 +137,6 @@ def customer_profile(request, pk):
 class CutomerProfile(generic.TemplateView):
     template_name = 'customer_profile.html'
     form_class = CustomerForm
-
-
-
-class SignupView(generic.CreateView):
-    template_name = "registration/signup.html"
-    form_class = CustomerUserCreationForm
-
-    def get_success_url(self):
-        return reverse("login")
     
 class LogoutViewRedirect(LogoutView):
     template_name = "registration/logout.html"
@@ -157,4 +145,30 @@ class LogoutViewRedirect(LogoutView):
         return reverse('shop:home')    
 
 
+class Login(LoginView):
+    model = User
+    template_name = "registration/login.html"
+
+    # accessing user into session to get its data
+    def post(self, *args, **kwargs):
+        customer = self.request.POST['username']
+        user = User.objects.get(username=customer)
+        user_id = user.id
+        customer = Customer.objects.get(user_id = user_id)
+        self.request.session['customer'] = customer.id
+
+        return super().post(*args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('shop:home')
+    
+    
+class Checkout(View):
+    template_name = "signup.html"
+
+    def post(self, request):
+        redirect('cart')
+    
+    # def get(self, request):
+    #     return render(request, 'checkout.html')
     

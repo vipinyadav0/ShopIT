@@ -129,10 +129,12 @@ STATIC_ROOT = "static_root"
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
+
+# for storing media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = "media_root"
 
-#login 
+# for login redirect url 
 LOGIN_REDIRECT_URL = '/'
 
 # Default primary key field type
@@ -142,6 +144,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # AUTH_USER_MODEL = 'shop.User'
 
+
+# for using crsipy form
 CRSIPY_ALLOWED_TEMPLATE_PACK = "tailwind"
 
 CRISPY_TEMPLATE_PACK = "tailwind"
