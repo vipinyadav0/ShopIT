@@ -9,6 +9,8 @@ urlpatterns = [
     path('profile/<int:pk>/', views.customer_profile, name='customer_profile'),
 
     #cart
-    path('checkout/', views.Checkout.as_view(), name='checkout')
+    # path('checkout/', views.Checkout.as_view(), name='checkout')
+    path('checkout/', views.checkout, name='checkout')
+    
 
 ]

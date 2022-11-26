@@ -14,6 +14,9 @@ from .models import Customer, Product
 class Home(View):
     def get(self, request):
         products = Product.objects.all()
+        print("product is: ",products)
+        print("request is: ",request)
+        print("cookie is:  ",request.COOKIES)
         if 'product_ids' in request.COOKIES:
             product_ids = request.COOKIES['product_ids']
             counter=product_ids.split('|')
@@ -26,6 +29,10 @@ class Home(View):
             'products': products,
             'num_visits' : num_visits
         }
+        print(request.session.get('cart'))
+        print(request.session.get('customer'))
+
+
         return render(request, 'home.html', context)
 
     def post(self, request):
@@ -79,7 +86,7 @@ def my_cart(request):
     if not request.session.get('cart'):
         print("No item in cart")
     else:
-        print(request.session.get('cart'))
+        print("cart item is: ",request.session.get('cart'))
         ids = list(request.session.get('cart').keys())
             # print(request.session.get('user'))
         products = Product.get_products_by_id(ids)
@@ -163,12 +170,12 @@ class Login(LoginView):
         return reverse('shop:home')
     
     
-class Checkout(View):
-    template_name = "signup.html"
+# class Checkout(View):
+#     template_name = "checkout.html"
 
-    def post(self, request):
-        redirect('cart')
+#     def post(self, request):
+#         redirect('cart')
+def checkout(request):
+    return render(request, "checkout.html")
     
-    # def get(self, request):
-    #     return render(request, 'checkout.html')
     
