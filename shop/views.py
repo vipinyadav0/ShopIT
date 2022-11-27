@@ -1,13 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.contrib.auth.views import LoginView, LogoutView
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views import View, generic
+import stripe
 
+
+from django.conf import settings
 from . import views
 from .forms import *
-from .models import Customer, Product
+from .models import Customer, Product, Order
 
 # shwing all the available products
 
@@ -176,6 +179,81 @@ class Login(LoginView):
 #     def post(self, request):
 #         redirect('cart')
 def checkout(request):
-    return render(request, "checkout.html")
+    print(request.session.get('cart'))
+    ids = list(request.session.get('cart').keys())
+            # print(request.session.get('user'))
+    products = Product.get_products_by_id(ids)
+    length = len(products)
+    context = {
+        'products': products,
+        'length': length
+    }
+    return render(request, 'checkout.html', context)
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+class CreateCheckoutSessionview(View):
+    # def post(self, request, *args, **kwargs):
+    #     YOUR_DOMAIN= "https://127.0.0.8080"
+    #     checkout_session = stripe.checkout.Session.create(
+    #         payment_method_types=['card'],
+    #         line_items=[
+    #             {
+    #                 # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+    #                 'price': 88800,
+    #                 'quantity': 1,
+    #             },
+    #         ],
+    #         mode='payment',
+    #         success_url=YOUR_DOMAIN + '/success/',
+    #         cancel_url=YOUR_DOMAIN + '/cancel/',
+    #     )
+    #     return JsonResponse({
+    #         'id': checkout_session.id
+    #     })
+    def create_checkout_session(request, id):
+
+        request_data = json.loads(request.body)
+        product = get_object_or_404(Product, pk=id)
+
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        checkout_session = stripe.checkout.Session.create(
+            # Customer Email is optional,
+            # It is not safe to accept email directly from the client side
+            customer_email = request_data['email'],
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                        'name': product.name,
+                        },
+                        'unit_amount': int(product.price * 100),
+                    },
+                    'quantity': 1,
+                }
+            ],
+            mode='payment',
+            success_url=request.build_absolute_uri(
+                reverse('success')
+            ) + "?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=request.build_absolute_uri(reverse('failed')),
+        )
+
+        # OrderDetail.objects.create(
+        #     customer_email=email,
+        #     product=product, ......
+        # )
+
+        order = OrderDetail()
+        order.customer_email = request_data['email']
+        order.product = product
+        order.stripe_payment_intent = checkout_session['payment_intent']
+        order.amount = int(product.price * 100)
+        order.save()
+
+        # return JsonResponse({'data': checkout_session})
+        return JsonResponse({'sessionId': checkout_session.id})
     
     

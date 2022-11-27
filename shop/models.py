@@ -52,6 +52,11 @@ class Product(models.Model):
     @staticmethod
     def get_products_by_id(ids):
         return Product.objects.filter(id__in = ids)
+    
+    def get_context_data(self, **kwargs):
+        context = super(Product, self).get_context_data(**kwargs)
+        context['stripe_publishable_key'] = settings.STRIPE_PUBLISHABLE_KEY
+        return context  
 
 
 
@@ -81,6 +86,17 @@ class Order(models.Model):
     mobile = models.CharField(max_length=20,null=True)
     order_date= models.DateField(auto_now_add=True,null=True)
     status=models.CharField(max_length=50,null=True,choices=STATUS)
+
+    stripe_payment_intent = models.CharField(
+        max_length=200
+    )
+    created_on = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_on = models.DateTimeField(
+        auto_now_add=True
+    )
 
 
 

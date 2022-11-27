@@ -10,7 +10,8 @@ urlpatterns = [
 
     #cart
     # path('checkout/', views.Checkout.as_view(), name='checkout')
-    path('checkout/', views.checkout, name='checkout')
+    path('checkout/', views.checkout, name='checkout'),
+    path('create-checkout-session/<id>/', views.CreateCheckoutSessionview.as_view(), name='create-checkout-session')
     
 
 ]
