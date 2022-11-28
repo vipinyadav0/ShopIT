@@ -18,6 +18,8 @@ admin.site.register(Category)
 admin.site.register(Order)
 admin.site.register(Feedback)
 admin.site.register(Session)
+admin.site.register(ShippingAddress)
+
 
 
 

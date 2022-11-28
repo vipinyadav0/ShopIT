@@ -118,19 +118,22 @@ class Feedback(models.Model):
 
 class ShippingAddress(models.Model):
     first_name = models.CharField(max_length=20, null=False, blank=False)
-    last_name = models.CharField(max_length=20, null=False, blank=False)
-    email = models.CharField(max_length=20, null=False, blank=False)
-    address = models.CharField(max_length=50, null=False, blank=False)
+    last_name = models.CharField(max_length=20, null=True, blank=True)
+    email = models.CharField(max_length=20, null=True, blank=True)
+    phone_number = models.CharField(max_length=10, null=True, blank=True)
+    address = models.CharField(max_length=50, null=True, blank=True)
+    city = models.CharField(max_length=15, null=True, blank=True, default='India')
+    state = models.CharField(max_length=10, null=True, blank=True)
+    post_code = models.IntegerField(max_length=6, null=True, blank=True)
+    save_info = models.BooleanField(default="True", null=True, blank=True)
 
-
-    
 
     class Meta:
         verbose_name = ("ShippingAddress")
         verbose_name_plural = ("ShippingAddresss")
 
     def __str__(self):
-        return self.name
+        return self.first_name
 
     def get_absolute_url(self):
         return reverse("ShippingAddress_detail", kwargs={"pk": self.pk})
