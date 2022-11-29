@@ -4,11 +4,11 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views import View, generic
-import stripe
 import json
 from django.http.response import JsonResponse # new
 from django.views.decorators.csrf import csrf_exempt # new
 
+import stripe
 from django.conf import settings
 from . import views
 from .forms import *
@@ -309,33 +309,42 @@ def checkout(request):
 #             return JsonResponse({'error': str(e)})
 
 
-class OrderSummaryView(generic.TemplateView):
-    template_name = 'order_summary.html'
-class SuccessView(generic.TemplateView):
-    template_name = "success.html"
-
-class CancelView(generic.TemplateView):
-    template_name = "cancel.html"
+# class OrderSummaryView(generic.TemplateView):
+#     template_name = 'order_summary.html'
 
 
 YOUR_DOMAIN = 'http://localhost:8000'
-def create_checkout_sessionn(self):
-    try:
-        stripe.api_key = settings.STRIPE_SECRET_KEY
-        checkout_session = stripe.checkout.Session.create(
-            line_items=[
-                {
-                    # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-                    'price': "price_1M94ihSD7rISbdVtTgbwr9CO",
-                    'quantity': 1,
-                },  
-            ],
-            mode='payment',
-            success_url=YOUR_DOMAIN + '/success.html',
-            cancel_url=YOUR_DOMAIN + '/cancel.html',
-        )
-        print("Success", checkout_session)
-        return JsonResponse(({'sessionID':checkout_session['id']}))
-    except Exception as e:
-        return redirect(checkout_session.url, code=303)
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+@csrf_exempt
+def create_checkout_sessionn(request):
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[
+            {
+                # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                'price': "price_1M94ihSD7rISbdVtTgbwr9CO",
+                'quantity': 1,
+            },  
+        ],
+        mode='payment',
+        success_url=YOUR_DOMAIN + '/success/',
+        cancel_url=YOUR_DOMAIN + '/cancel/',
+    )
+    print("Success", checkout_session)
+    return JsonResponse(({'sessionID':checkout_session['id']}))
+
+def order_summary(request):
+    return render(request, 'order_summary.html')
+# class SuccessView(generic.TemplateView):
+#     template_name = "success.html"
+
+# class CancelView(generic.TemplateView):
+#     template_name = "cancel.html"
+def success(request):
+    return render(request, 'success.html')
+
+def cancel(request):
+    return render(request, 'cancel.html')
+
 
